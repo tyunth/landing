@@ -1,0 +1,374 @@
+/* Адаптивные стили */
+
+/* Мобильные устройства (до 768px) */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero p {
+        font-size: 1.1rem;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .controls-panel {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .filters {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .filter-group {
+        width: 100%;
+    }
+
+    .upload-section {
+        align-items: flex-start;
+    }
+
+    .books-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .games-container {
+        grid-template-columns: 1fr;
+    }
+
+    .game-card {
+        padding: 20px;
+    }
+
+    .game-icon {
+        font-size: 3rem;
+    }
+
+    .contacts-container {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-content {
+        width: 95%;
+        max-height: 85vh;
+    }
+
+    .modal-body {
+        padding: 15px;
+    }
+
+    #pdf-container {
+        height: 60vh;
+    }
+
+    .modal-footer {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .modal-footer .btn {
+        width: 100%;
+    }
+
+    .book-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .book-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 2rem;
+    }
+
+    .book-actions {
+        flex-direction: column;
+    }
+}
+
+/* Планшеты (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .books-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .games-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .controls-panel {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .filters {
+        flex-direction: row;
+        align-items: flex-end;
+    }
+}
+
+/* Маленькие планшеты и большие телефоны (576px - 768px) */
+@media (min-width: 576px) and (max-width: 768px) {
+    .books-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .games-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .controls-panel {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Очень маленькие устройства (до 576px) */
+@media (max-width: 576px) {
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .hero p {
+        font-size: 1rem;
+    }
+
+    .controls-panel {
+        padding: 15px;
+    }
+
+    .search-box {
+        margin-bottom: 10px;
+    }
+
+    .filters {
+        margin-bottom: 10px;
+    }
+
+    .book-card {
+        padding: 15px;
+    }
+
+    .book-info h3 {
+        font-size: 1.1rem;
+    }
+
+    .game-card {
+        padding: 20px;
+    }
+
+    .game-icon {
+        font-size: 3rem;
+    }
+
+    .task-card {
+        padding: 15px;
+    }
+
+    .task-info h3 {
+        font-size: 1.1rem;
+    }
+
+    .task-form-container {
+        padding: 20px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .contact-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .contact-item i {
+        width: 100%;
+        text-align: left;
+    }
+}
+
+/* Ландшафтная ориентация мобильных устройств */
+@media (max-width: 768px) and (orientation: landscape) {
+    .books-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .games-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .hero {
+        min-height: 60vh;
+    }
+
+    .hero-content {
+        padding: 20px;
+    }
+
+    .hero h1 {
+        font-size: 2rem;
+    }
+}
+
+/* Портретная ориентация мобильных устройств */
+@media (max-width: 768px) and (orientation: portrait) {
+    .hero {
+        min-height: 70vh;
+    }
+
+    .hero h1 {
+        font-size: 2.2rem;
+    }
+
+    .books-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .games-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Очень большие экраны */
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1400px;
+    }
+
+    .books-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Средние экраны */
+@media (min-width: 1025px) and (max-width: 1399px) {
+    .books-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Небольшие экраны */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .books-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Очень маленькие экраны */
+@media (max-width: 480px) {
+    .container {
+        padding: 10px;
+    }
+
+    .hero h1 {
+        font-size: 1.8rem;
+    }
+
+    .hero p {
+        font-size: 0.9rem;
+    }
+
+    .btn {
+        padding: 12px 20px;
+        font-size: 1rem;
+    }
+
+    .controls-panel {
+        padding: 15px;
+    }
+
+    .book-card {
+        padding: 15px;
+    }
+
+    .book-info h3 {
+        font-size: 1rem;
+    }
+
+    .game-card {
+        padding: 15px;
+    }
+
+    .game-icon {
+        font-size: 2.5rem;
+    }
+
+    .modal-content {
+        width: 100%;
+        max-height: 80vh;
+    }
+
+    #pdf-container {
+        height: 50vh;
+    }
+}
+
+/* Анимации для мобильных */
+@media (max-width: 768px) {
+    .book-card {
+        animation: none; /* Отключаем анимации на слабых устройствах */
+    }
+}
+
+/* Улучшения для сенсорных устройств */
+@media (hover: none) and (pointer: coarse) {
+    .btn {
+        min-height: 44px; /* Минимальный размер для тапа по рекомендациям Google */
+        padding: 15px 25px;
+    }
+
+    .back-btn {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    .book-card {
+        padding: 25px;
+    }
+
+    .upload-btn {
+        min-height: 44px;
+        padding: 15px 25px;
+    }
+}
+
+/* Стили для печати */
+@media print {
+    body {
+        background-color: white;
+        color: black;
+    }
+
+    .btn, .back-btn, .upload-btn, .controls-panel {
+        display: none !important;
+    }
+
+    .page-header h2 {
+        color: black;
+    }
+
+    .book-card, .game-card {
+        break-inside: avoid;
+        margin-bottom: 20px;
+    }
+
+    .modal {
+        display: none !important;
+    }
+}

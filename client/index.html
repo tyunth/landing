@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Landing - Учебники и задачи по математике</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+    
+    <!-- Meta Tags -->
+    <meta name="description" content="Math Landing - онлайн библиотека учебников и задач по математике для 5-11 классов">
+    <meta name="keywords" content="математика, учебники, задачи, 5 класс, 6 класс, 7 класс, 8 класс, 9 класс, 10 класс, 11 класс">
+    <meta name="author" content="Math Landing">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Math Landing - Учебники и задачи по математике">
+    <meta property="og:description" content="Онлайн библиотека учебников и задач по математике для 5-11 классов">
+    <meta property="og:type" content="website">
+    
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-calculator"></i>
+                    <h1>Math Landing</h1>
+                </div>
+                
+                <nav class="nav-menu">
+                    <button class="nav-toggle" id="nav-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <ul class="nav-list">
+                        <li><a href="#home" onclick="navigateTo('home')"><i class="fas fa-home"></i> Главная</a></li>
+                        <li><a href="#books" onclick="navigateTo('books')"><i class="fas fa-book"></i> Учебники</a></li>
+                        <li><a href="#tasks" onclick="navigateTo('tasks')"><i class="fas fa-puzzle-piece"></i> Задачи</a></li>
+                        <li><a href="#upload" onclick="navigateTo('upload')"><i class="fas fa-upload"></i> Загрузка</a></li>
+                        <li><a href="#games" onclick="navigateTo('games')"><i class="fas fa-gamepad"></i> Игры</a></li>
+                        <li><a href="#contact" onclick="navigateTo('contact')"><i class="fas fa-envelope"></i> Контакты</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Home Page -->
+        <section id="home-page" class="page active">
+            <div class="hero">
+                <div class="container">
+                    <div class="hero-content">
+                        <h1>Добро пожаловать в Math Landing</h1>
+                        <p>Ваш надежный помощник в изучении математики</p>
+                        <div class="hero-stats">
+                            <div class="stat-item">
+                                <i class="fas fa-book"></i>
+                                <span id="books-count">0</span>
+                                <p>Учебников</p>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-puzzle-piece"></i>
+                                <span id="tasks-count">0</span>
+                                <p>Задач</p>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-users"></i>
+                                <span id="users-count">1000+</span>
+                                <p>Пользователей</p>
+                            </div>
+                        </div>
+                        <div class="hero-actions">
+                            <button class="btn btn-primary" onclick="navigateTo('books')">
+                                <i class="fas fa-book"></i> Перейти к учебникам
+                            </button>
+                            <button class="btn btn-secondary" onclick="navigateTo('tasks')">
+                                <i class="fas fa-puzzle-piece"></i> Решать задачи
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="features">
+                <div class="container">
+                    <h2>Наши возможности</h2>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <i class="fas fa-book-open"></i>
+                            <h3>Большая библиотека</h3>
+                            <p>Собраны лучшие учебники по математике для всех классов</p>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-puzzle-piece"></i>
+                            <h3>Интерактивные задачи</h3>
+                            <p>Задачи на готовых чертежах с возможностью проверки ответов</p>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <h3>Загрузка файлов</h3>
+                            <p>Возможность загружать свои учебники и делиться ими</p>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-mobile-alt"></i>
+                            <h3>Адаптивный дизайн</h3>
+                            <p>Удобное использование на любых устройствах</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Books Page -->
+        <section id="books-page" class="page">
+            <div class="container">
+                <div class="page-header">
+                    <h1>📚 Учебники по математике</h1>
+                    <p>Выберите учебник для изучения или загрузите новый</p>
+                </div>
+                
+                <!-- Filters -->
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="search-input">Поиск:</label>
+                        <input type="text" id="search-input" placeholder="Поиск по названию, автору или описанию...">
+                    </div>
+                    <div class="filter-group">
+                        <label for="class-filter">Класс:</label>
+                        <select id="class-filter">
+                            <option value="all">Все классы</option>
+                            <option value="5">5 класс</option>
+                            <option value="6">6 класс</option>
+                            <option value="7">7 класс</option>
+                            <option value="8">8 класс</option>
+                            <option value="9">9 класс</option>
+                            <option value="10">10 класс</option>
+                            <option value="11">11 класс</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="subject-filter">Предмет:</label>
+                        <select id="subject-filter">
+                            <option value="all">Все предметы</option>
+                            <option value="math">Математика</option>
+                            <option value="algebra">Алгебра</option>
+                            <option value="geometry">Геометрия</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="category-filter">Категория:</label>
+                        <select id="category-filter">
+                            <option value="all">Все категории</option>
+                            <option value="basic">Основные</option>
+                            <option value="additional">Дополнительные</option>
+                            <option value="recommended">Рекомендованные</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Books Grid -->
+                <div id="books-grid" class="books-grid">
+                    <!-- Books will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Tasks Page -->
+        <section id="tasks-page" class="page">
+            <div class="container">
+                <div class="page-header">
+                    <h1>📐 Задачи на готовых чертежах</h1>
+                    <p>Решайте задачи и проверяйте свои ответы</p>
+                </div>
+                
+                <!-- Task Form -->
+                <div id="task-form-container" class="task-form-container" style="display: none;">
+                    <div class="form-card">
+                        <h3>➕ Добавить новую задачу</h3>
+                        <form id="task-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="new-task-class">Класс:</label>
+                                    <select id="new-task-class" required>
+                                        <option value="">Выберите класс</option>
+                                        <option value="5">5 класс</option>
+                                        <option value="6">6 класс</option>
+                                        <option value="7">7 класс</option>
+                                        <option value="8">8 класс</option>
+                                        <option value="9">9 класс</option>
+                                        <option value="10">10 класс</option>
+                                        <option value="11">11 класс</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="new-task-theme">Тема:</label>
+                                    <select id="new-task-theme" required>
+                                        <option value="">Выберите тему</option>
+                                        <option value="geometry">Геометрия</option>
+                                        <option value="algebra">Алгебра</option>
+                                        <option value="trigonometry">Тригонометрия</option>
+                                        <option value="stereometry">Стереометрия</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="new-task-description">Описание задачи:</label>
+                                <textarea id="new-task-description" rows="4" placeholder="Введите описание задачи..." required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="new-task-answer">Ответ:</label>
+                                <textarea id="new-task-answer" rows="3" placeholder="Введите ответ на задачу..." required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="task-image-upload">Изображение (по желанию):</label>
+                                <div class="upload-section">
+                                    <div class="upload-content">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <p>Перетащите изображение сюда или нажмите для выбора</p>
+                                        <input type="file" id="task-image-upload" accept="image/*">
+                                    </div>
+                                    <div id="task-upload-status"></div>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" onclick="cancelTaskForm()">Отмена</button>
+                                <button type="submit" class="btn btn-primary">Добавить задачу</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Task Filters -->
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="task-search-input">Поиск:</label>
+                        <input type="text" id="task-search-input" placeholder="Поиск по описанию...">
+                    </div>
+                    <div class="filter-group">
+                        <label for="task-class-filter">Класс:</label>
+                        <select id="task-class-filter">
+                            <option value="all">Все классы</option>
+                            <option value="5">5 класс</option>
+                            <option value="6">6 класс</option>
+                            <option value="7">7 класс</option>
+                            <option value="8">8 класс</option>
+                            <option value="9">9 класс</option>
+                            <option value="10">10 класс</option>
+                            <option value="11">11 класс</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="task-theme-filter">Тема:</label>
+                        <select id="task-theme-filter">
+                            <option value="all">Все темы</option>
+                            <option value="geometry">Геометрия</option>
+                            <option value="algebra">Алгебра</option>
+                            <option value="trigonometry">Тригонометрия</option>
+                            <option value="stereometry">Стереометрия</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="showTaskForm()">
+                        <i class="fas fa-plus"></i> Добавить задачу
+                    </button>
+                </div>
+                
+                <!-- Tasks Grid -->
+                <div id="tasks-grid" class="tasks-grid">
+                    <!-- Tasks will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Upload Page -->
+        <section id="upload-page" class="page">
+            <div class="container">
+                <div class="page-header">
+                    <h1>📤 Система загрузки файлов</h1>
+                    <p>Загружайте учебники и делитесь ими с другими пользователями</p>
+                </div>
+                
+                <div class="upload-grid">
+                    <!-- PDF Upload -->
+                    <div class="upload-card">
+                        <div class="upload-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <h3>Загрузка учебников</h3>
+                        <p>Загрузите PDF файл учебника</p>
+                        <div class="upload-section">
+                            <div class="upload-content">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Перетащите PDF файл сюда или нажмите для выбора</p>
+                                <input type="file" id="file-upload" accept="application/pdf">
+                            </div>
+                            <div id="upload-status"></div>
+                        </div>
+                        <div class="upload-info">
+                            <p><i class="fas fa-info-circle"></i> Максимальный размер файла: 50MB</p>
+                            <p><i class="fas fa-info-circle"></i> Поддерживаются только PDF файлы</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Games Page -->
+        <section id="games-page" class="page">
+            <div class="container">
+                <div class="page-header">
+                    <h1>🎮 Мини-игры</h1>
+                    <p>Обучение через игру</p>
+                </div>
+                
+                <div class="games-grid">
+                    <div class="game-card">
+                        <div class="game-icon">🔢</div>
+                        <h3>Математический тренажер</h3>
+                        <p>Решайте примеры на время и улучшайте свои навыки</p>
+                        <button class="btn btn-primary" onclick="startMathGame()">Начать игру</button>
+                    </div>
+                    <div class="game-card">
+                        <div class="game-icon">🧩</div>
+                        <h3>Геометрические головоломки</h3>
+                        <p>Развивайте пространственное мышление</p>
+                        <button class="btn btn-primary" onclick="startGeometryGame()">Играть</button>
+                    </div>
+                    <div class="game-card">
+                        <div class="game-icon">⚡</div>
+                        <h3>Счет на скорость</h3>
+                        <p>Тренируйте устный счет</p>
+                        <button class="btn btn-primary" onclick="startSpeedGame()">Начать</button>
+                    </div>
+                </div>
+                
+                <!-- Game Area -->
+                <div id="game-area" class="game-area" style="display: none;">
+                    <div class="game-content">
+                        <div class="game-header">
+                            <h3 id="game-title">Игра</h3>
+                            <div class="game-stats">
+                                <span id="score">Счет: 0</span>
+                                <span id="time">Время: 60</span>
+                            </div>
+                        </div>
+                        <div id="game-content" class="game-content-area">
+                            <!-- Game content will be loaded here -->
+                        </div>
+                        <div class="game-controls">
+                            <button class="btn btn-secondary" onclick="endGame()">Завершить игру</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Page -->
+        <section id="contact-page" class="page">
+            <div class="container">
+                <div class="page-header">
+                    <h1>✉️ Контакты</h1>
+                    <p>Свяжитесь с нами или оставьте отзыв</p>
+                </div>
+                
+                <div class="contact-grid">
+                    <div class="contact-info">
+                        <h3>Информация</h3>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <h4>Email</h4>
+                                <p>support@mathlanding.com</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <div>
+                                <h4>Телефон</h4>
+                                <p>+7 (XXX) XXX-XX-XX</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>
+                                <h4>Адрес</h4>
+                                <p>г. Алматы, Казахстан</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-form">
+                        <h3>Написать сообщение</h3>
+                        <form id="contact-form">
+                            <div class="form-group">
+                                <label for="name">Имя:</label>
+                                <input type="text" id="name" name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email:</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="message">Сообщение:</label>
+                                <textarea id="message" name="message" rows="5" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Отправить</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- PDF Modal -->
+    <div id="pdf-modal" class="modal">
+        <div class="modal-content pdf-modal-content">
+            <div class="modal-header">
+                <h3 id="pdf-title">PDF Просмотрщик</h3>
+                <div class="modal-actions">
+                    <button class="btn-icon" id="fullscreen" title="Полноэкранный режим">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                    <button class="btn-icon" id="fit-to-container" title="Подогнать под контейнер">
+                        <i class="fas fa-compress-arrows-alt"></i>
+                    </button>
+                    <button class="btn-icon" id="zoom-out" title="Уменьшить">
+                        <i class="fas fa-search-minus"></i>
+                    </button>
+                    <button class="btn-icon" id="zoom-in" title="Увеличить">
+                        <i class="fas fa-search-plus"></i>
+                    </button>
+                    <button class="close-btn" onclick="closePdfViewer()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="pdf-controls">
+                    <button id="prev-page" class="btn-icon" title="Предыдущая страница">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div class="page-info">
+                        <span id="page-info">Страница 1 из 1</span>
+                        <input type="number" id="page-num" min="1" max="1" value="1">
+                    </div>
+                    <button id="next-page" class="btn-icon" title="Следующая страница">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div id="pdf-viewer" class="pdf-viewer">
+                    <div id="pdf-container" class="pdf-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications -->
+    <div id="notifications"></div>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script src="js/upload.js"></script>
+    <script src="js/pdf.js"></script>
+    
+    <!-- Game Scripts -->
+    <script src="js/games.js"></script>
+</body>
+</html>

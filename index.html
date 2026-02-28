@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Математика с Учитель</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Главный контейнер -->
+    <div class="container">
+        <!-- Главная страница -->
+        <div id="home-page" class="page active">
+            <div class="hero">
+                <div class="hero-content">
+                    <h1>📚 Математика</h1>
+                    <p>Ваш надежный помощник в изучении математики</p>
+                    <div class="hero-buttons">
+                        <button class="btn btn-primary" onclick="navigateTo('books')">Учебники</button>
+                        <button class="btn btn-secondary" onclick="navigateTo('tasks')">Задачи</button>
+                        <button class="btn btn-tertiary" onclick="navigateTo('games')">Мини-игры</button>
+                        <button class="btn btn-tertiary" onclick="navigateTo('contacts')">Контакты</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Раздел Учебники -->
+        <div id="books-page" class="page">
+            <div class="page-header">
+                <button class="back-btn" onclick="navigateTo('home')">
+                    <i class="fas fa-arrow-left"></i> Назад
+                </button>
+                <h2>📖 Учебники</h2>
+            </div>
+            
+            <!-- Панель управления -->
+            <div class="controls-panel">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-input" placeholder="Поиск по названию учебника...">
+                </div>
+                
+                <div class="filters">
+                    <div class="filter-group">
+                        <label>Класс:</label>
+                        <select id="class-filter">
+                            <option value="all">Все классы</option>
+                            <option value="5">5 класс</option>
+                            <option value="6">6 класс</option>
+                            <option value="7">7 класс</option>
+                            <option value="8">8 класс</option>
+                            <option value="9">9 класс</option>
+                            <option value="10">10 класс</option>
+                            <option value="11">11 класс</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>Предмет:</label>
+                        <select id="subject-filter">
+                            <option value="all">Все предметы</option>
+                            <option value="math">Математика</option>
+                            <option value="algebra">Алгебра</option>
+                            <option value="geometry">Геометрия</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>Категория:</label>
+                        <select id="category-filter">
+                            <option value="all">Все категории</option>
+                            <option value="basic">Основные</option>
+                            <option value="additional">Дополнительные</option>
+                            <option value="recommended">Рекомендованные</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="upload-section">
+                    <label class="upload-btn">
+                        <i class="fas fa-upload"></i> Загрузить учебник
+                        <input type="file" id="file-upload" accept="application/pdf" style="display: none;">
+                    </label>
+                    <div id="upload-status" class="upload-status"></div>
+                </div>
+            </div>
+
+            <!-- Список учебников -->
+            <div class="books-grid" id="books-grid">
+                <!-- Учебники будут добавляться сюда динамически -->
+            </div>
+        </div>
+
+        <!-- Раздел Мини-игры -->
+        <div id="games-page" class="page">
+            <div class="page-header">
+                <button class="back-btn" onclick="navigateTo('home')">
+                    <i class="fas fa-arrow-left"></i> Назад
+                </button>
+                <h2>🎮 Мини-игры</h2>
+            </div>
+            
+            <div class="games-container">
+                <div class="game-card">
+                    <div class="game-icon">🔢</div>
+                    <h3>Математический тренажер</h3>
+                    <p>Решайте примеры и улучшайте свои навыки</p>
+                    <button class="btn btn-primary">Играть</button>
+                </div>
+                
+                <div class="game-card">
+                    <div class="game-icon">🧩</div>
+                    <h3>Геометрические головоломки</h3>
+                    <p>Развивайте пространственное мышление</p>
+                    <button class="btn btn-primary">Играть</button>
+                </div>
+                
+                <div class="game-card">
+                    <div class="game-icon">📊</div>
+                    <h3>Статистика и вероятности</h3>
+                    <p>Изучайте основы теории вероятностей</p>
+                    <button class="btn btn-primary">Играть</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Раздел Задачи -->
+        <div id="tasks-page" class="page">
+            <div class="page-header">
+                <button class="back-btn" onclick="navigateTo('home')">
+                    <i class="fas fa-arrow-left"></i> Назад
+                </button>
+                <h2>📐 Задачи на готовых чертежах</h2>
+            </div>
+            
+            <!-- Панель управления задачами -->
+            <div class="controls-panel">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="task-search-input" placeholder="Поиск по описанию задачи...">
+                </div>
+                
+                <div class="filters">
+                    <div class="filter-group">
+                        <label>Класс:</label>
+                        <select id="task-class-filter">
+                            <option value="all">Все классы</option>
+                            <option value="5">5 класс</option>
+                            <option value="6">6 класс</option>
+                            <option value="7">7 класс</option>
+                            <option value="8">8 класс</option>
+                            <option value="9">9 класс</option>
+                            <option value="10">10 класс</option>
+                            <option value="11">11 класс</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>Тема:</label>
+                        <select id="task-theme-filter">
+                            <option value="all">Все темы</option>
+                            <option value="geometry">Геометрия</option>
+                            <option value="algebra">Алгебра</option>
+                            <option value="trigonometry">Тригонометрия</option>
+                            <option value="stereometry">Стереометрия</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="upload-section">
+                    <label class="upload-btn">
+                        <i class="fas fa-image"></i> Добавить задачу
+                        <input type="file" id="task-image-upload" accept="image/*" style="display: none;">
+                    </label>
+                    <div id="task-upload-status" class="upload-status"></div>
+                </div>
+            </div>
+
+            <!-- Форма добавления задачи -->
+            <div id="task-form-container" class="task-form-container" style="display: none;">
+                <div class="form-card">
+                    <h3>Добавить новую задачу</h3>
+                    <form id="task-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Класс:</label>
+                                <select id="new-task-class" required>
+                                    <option value="">Выберите класс</option>
+                                    <option value="5">5 класс</option>
+                                    <option value="6">6 класс</option>
+                                    <option value="7">7 класс</option>
+                                    <option value="8">8 класс</option>
+                                    <option value="9">9 класс</option>
+                                    <option value="10">10 класс</option>
+                                    <option value="11">11 класс</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Тема:</label>
+                                <select id="new-task-theme" required>
+                                    <option value="">Выберите тему</option>
+                                    <option value="geometry">Геометрия</option>
+                                    <option value="algebra">Алгебра</option>
+                                    <option value="trigonometry">Тригонометрия</option>
+                                    <option value="stereometry">Стереометрия</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Описание задачи:</label>
+                            <textarea id="new-task-description" placeholder="Введите описание задачи..." rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Ответ:</label>
+                            <textarea id="new-task-answer" placeholder="Введите ответ на задачу..." rows="3" required></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" onclick="cancelTaskForm()">Отмена</button>
+                            <button type="submit" class="btn btn-primary">Сохранить задачу</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Список задач -->
+            <div class="tasks-grid" id="tasks-grid">
+                <!-- Задачи будут добавляться сюда динамически -->
+            </div>
+        </div>
+
+        <!-- Раздел Контакты -->
+        <div id="contacts-page" class="page">
+            <div class="page-header">
+                <button class="back-btn" onclick="navigateTo('home')">
+                    <i class="fas fa-arrow-left"></i> Назад
+                </button>
+                <h2>📞 Контакты</h2>
+            </div>
+            
+            <div class="contacts-container">
+                <div class="contact-info">
+                    <h3>Свяжитесь со мной</h3>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>teacher@mathschool.kz</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <span>+7 (777) 123-45-67</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>г. Алматы, ул. Педагогическая, 15</span>
+                    </div>
+                </div>
+                
+                <div class="contact-form">
+                    <h3>Написать сообщение</h3>
+                    <form id="contact-form">
+                        <div class="form-group">
+                            <input type="text" id="name" placeholder="Ваше имя" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="email" placeholder="Email" required>
+                        </div>
+                        <div class="form-group">
+                            <textarea id="message" placeholder="Сообщение" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Отправить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF Viewer Modal -->
+    <div id="pdf-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="pdf-title">Просмотр учебника</h3>
+                <button class="close-btn" onclick="closePdfViewer()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="pdf-container">
+                    <!-- PDF будет загружаться сюда -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="prevPage()">Назад</button>
+                <span id="page-info">Страница 1 из 1</span>
+                <button class="btn btn-secondary" onclick="nextPage()">Вперед</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Подключаем PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+    <script>
+        // Инициализация PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
+    </script>
+    
+    <script src="js/main.js"></script>
+    <script src="js/books.js"></script>
+    <script src="js/upload.js"></script>
+</body>
+</html>
