@@ -300,36 +300,38 @@ function promptBookInfo(defaultTitle, defaultAuthor) {
 }
 
 // Сохранение информации о учебнике
-function saveBookInfo() {
+async function saveBookInfo() {
     const modal = window.currentBookInfoModal;
     if (!modal) return;
     
-    const title = document.getElementById('book-title').value;
-    const author = document.getElementById('book-author').value;
-    const classNum = document.getElementById('book-class').value;
-    const subject = document.getElementById('book-subject').value;
-    const category = document.getElementById('book-category').value;
-    const description = document.getElementById('book-description').value;
-    
-    if (!title || !author || !classNum || !subject || !category) {
-        showNotification('Пожалуйста, заполните все обязательные поля', 'error');
-        return;
-    }
-    
-    const bookInfo = {
-        title: title,
-        author: author,
-        class: classNum,
-        subject: subject,
-        category: category,
-        description: description
+    // Собираем данные из формы
+    const bookData = {
+        title: document.getElementById('book-title').value,
+        author: document.getElementById('book-author').value,
+        class: document.getElementById('book-class').value,
+        subject: document.getElementById('book-subject').value,
+        category: document.getElementById('book-category').value,
+        description: document.getElementById('book-description').value
     };
-    
-    closeBookInfoModal();
-    
-    // Возвращаем информацию о книге
-    if (typeof window.handleBookInfo !== 'undefined') {
-        window.handleBookInfo(bookInfo);
+
+    try {
+        // 1. Сначала создаем запись о книге в БД
+        const response = await fetch('/api/books', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(bookData)
+        });
+        const newBook = await response.json();
+
+        // 2. Если файл уже был загружен в saveFileToStorage, нам нужно обновить запись
+        // Или передать bookId прямо в процесс загрузки.
+        
+        showNotification('Учебник успешно сохранен в базе!', 'success');
+        closeBookInfoModal();
+        if (typeof renderBooks === 'function') renderBooks(); 
+    } catch (error) {
+        console.error('Ошибка сохранения:', error);
+        showNotification('Ошибка при сохранении в БД', 'error');
     }
 }
 

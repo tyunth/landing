@@ -48,10 +48,11 @@ const pdfStorage = multer.diskStorage({
         cb(null, pdfDir);
     },
         filename: function (req, file, cb) {
-            const ext = path.extname(file.originalname);
-            const nameWithoutExt = path.basename(file.originalname, ext);
-            const uniqueName = `book_${Date.now()}_${Math.random().toString(36).substr(2, 5)}${ext}`;
-            cb(null, uniqueName);
+            // Если в имени уже есть .pdf, не добавляем его снова
+            const name = file.originalname.endsWith('.pdf') 
+                ? file.originalname 
+                : file.originalname + '.pdf';
+        cb(null, name);
         }
 });
 
