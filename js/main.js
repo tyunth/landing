@@ -236,12 +236,12 @@ function renderBooks(booksToRender = null) {
     const container = document.getElementById('books-grid');
     if (!container) return;
 
-    // 1. Определяем, какой массив использовать (переданный или глобальный)
+    // Используем либо отфильтрованный список, либо глобальную переменную books
     const booksList = booksToRender || books;
     
     container.innerHTML = '';
     
-    // 2. Проверяем именно массив книг на пустоту
+    // Проверяем массив на пустоту
     if (!booksList || booksList.length === 0) {
         container.innerHTML = `
             <div class="no-books">
@@ -253,9 +253,8 @@ function renderBooks(booksToRender = null) {
         return;
     }
     
-    // 3. Перебираем массив книг
     booksList.forEach(book => {
-        // Определяем путь к файлу (учитываем и БД, и старые данные)
+        // ВАЖНО: берем путь из БД (file_path) или из старых данных (file)
         const fileUrl = book.file_path || book.file;
         
         const bookCard = document.createElement('div');
