@@ -21,8 +21,10 @@ const pool = new Pool({
 
 // Middleware
 app.use(cors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:1000',
-    credentials: true
+    origin: process.env.CORS_ORIGIN || ['http://localhost:1000', 'https://igro-kon.ru'],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(express.json());
