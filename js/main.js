@@ -234,11 +234,15 @@ function filterBooks() {
 // Отображение учебников
 function renderBooks(booksToRender = null) {
     const container = document.getElementById('books-grid');
-    const booksToShow = booksToRender || books;
+    if (!container) return;
+
+    // 1. Определяем, какой массив использовать (переданный или глобальный)
+    const booksList = booksToRender || books;
     
     container.innerHTML = '';
     
-    if (booksToShow.length === 0) {
+    // 2. Проверяем именно массив книг на пустоту
+    if (!booksList || booksList.length === 0) {
         container.innerHTML = `
             <div class="no-books">
                 <div class="no-books-icon">📚</div>
@@ -249,7 +253,11 @@ function renderBooks(booksToRender = null) {
         return;
     }
     
-    booksToShow.forEach(book => {
+    // 3. Перебираем массив книг
+    booksList.forEach(book => {
+        // Определяем путь к файлу (учитываем и БД, и старые данные)
+        const fileUrl = book.file_path || book.file;
+        
         const bookCard = document.createElement('div');
         bookCard.className = 'book-card';
         bookCard.innerHTML = `
@@ -266,13 +274,13 @@ function renderBooks(booksToRender = null) {
                 <span class="tag">${getCategoryIcon(book.category)} ${getCategoryName(book.category)}</span>
             </div>
             <div class="book-description">
-                <p>${book.description}</p>
+                <p>${book.description || 'Описание отсутствует'}</p>
             </div>
             <div class="book-actions">
-                <button class="btn btn-primary" onclick="openPdfViewer('${book.file}', '${book.title}')">
+                <button class="btn btn-primary" onclick="openPdfViewer('${fileUrl}', '${book.title}')">
                     <i class="fas fa-eye"></i> Просмотреть
                 </button>
-                <button class="btn btn-secondary" onclick="downloadBook('${book.file}', '${book.title}')">
+                <button class="btn btn-secondary" onclick="downloadBook('${fileUrl}', '${book.title}')">
                     <i class="fas fa-download"></i> Скачать
                 </button>
             </div>
@@ -320,13 +328,19 @@ function getCategoryName(category) {
 
 // Функции для работы с PDF
 async function openPdfViewer(fileUrl, title) {
+    // 1. Проверка на undefined (защита от вылета)
+    if (!fileUrl || fileUrl === 'undefined') {
+        console.error('Ошибка: fileUrl не определен');
+        showNotification('Файл учебника не найден в базе', 'error');
+        return;
+    }
+
     document.getElementById('pdf-modal').classList.add('active');
     document.getElementById('pdf-title').textContent = title;
     
     const container = document.getElementById('pdf-container');
     
     try {
-        // Показываем индикатор загрузки
         container.innerHTML = `
             <div style="text-align: center; padding: 40px; color: #666;">
                 <div style="font-size: 4rem; margin-bottom: 20px;">⏳</div>
@@ -335,41 +349,38 @@ async function openPdfViewer(fileUrl, title) {
             </div>
         `;
         
-        // Загружаем PDF с сервера
-        const response = await fetch(`/pdf/${fileUrl}`);
+        // 2. Исправляем путь. Если fileUrl уже содержит /pdf/, не добавляем его.
+        const finalUrl = fileUrl.startsWith('/pdf/') ? fileUrl : `/pdf/${fileUrl}`;
+        
+        console.log('Запрашиваю файл:', finalUrl);
+
+        const response = await fetch(finalUrl);
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`Сервер ответил кодом ${response.status} (Файл не найден)`);
         }
         
         const blob = await response.blob();
         
-        // Загружаем PDF через PDF.js
         if (typeof pdfjsLib !== 'undefined') {
-            // Инициализируем PDF.js
             const loadingTask = pdfjsLib.getDocument(URL.createObjectURL(blob));
             
             loadingTask.promise.then(function(pdf) {
-                // Успешно загрузили PDF
                 currentPdfDoc = pdf;
                 currentPageNum = 1;
                 document.getElementById('page-info').textContent = 'Страница 1 из ' + pdf.numPages;
-                
-                // Рендерим первую страницу
                 renderPage(1);
-                
-                // Обновляем состояние кнопок
                 updatePageButtons();
             }).catch(function(error) {
                 console.error('Ошибка PDF.js:', error);
-                showPdfError('Ошибка при открытии PDF: ' + error.message);
+                showPdfError('Ошибка при отрисовке PDF: ' + error.message);
             });
         } else {
-            showPdfError('PDF.js не загружен. Пожалуйста, обновите страницу.');
+            showPdfError('Библиотека PDF.js не загружена.');
         }
         
     } catch (error) {
         console.error('Ошибка загрузки PDF:', error);
-        showPdfError('Не удалось загрузить PDF файл: ' + error.message);
+        showPdfError('Не удалось открыть файл: ' + error.message);
     }
 }
 
