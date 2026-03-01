@@ -68,10 +68,10 @@ function validateAndProcessFile(file) {
         return;
     }
     
-    // Проверка размера файла (максимум 50MB)
-    const maxSize = 50 * 1024 * 1024; // 50MB
+    // Проверка размера файла (максимум 250MB)
+    const maxSize = 250 * 1024 * 1024; // 250MB
     if (file.size > maxSize) {
-        showUploadStatus('error', 'Файл слишком большой. Максимальный размер: 50MB');
+        showUploadStatus('error', 'Файл слишком большой. Максимальный размер: 250MB');
         return;
     }
     
@@ -205,6 +205,11 @@ function addBookFromFile(file, fileName) {
             let currentBooks = JSON.parse(localStorage.getItem('mathBooks') || '[]');
             currentBooks.push(newBook);
             localStorage.setItem('mathBooks', JSON.stringify(currentBooks));
+            
+            // Пробуем вызвать renderBooks напрямую, если она доступна
+            if (typeof renderBooks === 'function') {
+                renderBooks();
+            }
         }
         
         showNotification('Учебник добавлен в библиотеку!', 'success');
