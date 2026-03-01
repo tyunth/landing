@@ -298,25 +298,150 @@ function getCategoryName(category) {
 }
 
 // Функции для работы с PDF
-function openPdfViewer(fileUrl, title) {
+async function openPdfViewer(fileUrl, title) {
     document.getElementById('pdf-modal').classList.add('active');
     document.getElementById('pdf-title').textContent = title;
     
-    // Здесь будет логика загрузки PDF
-    // Пока просто показываем заглушку
+    const container = document.getElementById('pdf-container');
+    
+    try {
+        // Показываем индикатор загрузки
+        container.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #666;">
+                <div style="font-size: 4rem; margin-bottom: 20px;">⏳</div>
+                <h3>Загрузка PDF...</h3>
+                <p>Файл: ${title}</p>
+            </div>
+        `;
+        
+        // Пытаемся получить PDF из хранилища
+        let pdfData;
+        try {
+            pdfData = await getFileUrl(fileUrl);
+        } catch (error) {
+            console.warn('Файл не найден в хранилище:', error.message);
+            // Пытаемся загрузить с сервера
+            try {
+                const response = await fetch(`/uploads/pdf/${fileUrl}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const blob = await response.blob();
+                const reader = new FileReader();
+                pdfData = await new Promise((resolve, reject) => {
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+                });
+            } catch (serverError) {
+                console.error('Ошибка загрузки с сервера:', serverError);
+                throw new Error('Файл не найден ни в хранилище, ни на сервере');
+            }
+        }
+        
+        // Загружаем PDF через PDF.js
+        if (typeof pdfjsLib !== 'undefined') {
+            // Инициализируем PDF.js
+            const loadingTask = pdfjsLib.getDocument({ data: atob(pdfData.split(',')[1]) });
+            
+            loadingTask.promise.then(function(pdf) {
+                // Успешно загрузили PDF
+                currentPdfDoc = pdf;
+                currentPageNum = 1;
+                document.getElementById('page-info').textContent = 'Страница 1 из ' + pdf.numPages;
+                
+                // Рендерим первую страницу
+                renderPage(1);
+                
+                // Обновляем состояние кнопок
+                updatePageButtons();
+            }).catch(function(error) {
+                console.error('Ошибка PDF.js:', error);
+                showPdfError('Ошибка при открытии PDF: ' + error.message);
+            });
+        } else {
+            showPdfError('PDF.js не загружен. Пожалуйста, обновите страницу.');
+        }
+        
+    } catch (error) {
+        console.error('Ошибка загрузки PDF:', error);
+        showPdfError('Не удалось загрузить PDF файл: ' + error.message);
+    }
+}
+
+// Показ ошибки PDF
+function showPdfError(message) {
     const container = document.getElementById('pdf-container');
     container.innerHTML = `
-        <div style="text-align: center; padding: 40px; color: #666;">
-            <div style="font-size: 4rem; margin-bottom: 20px;">📄</div>
-            <h3>PDF Viewer</h3>
-            <p>Файл: ${title}</p>
-            <p style="margin-top: 20px; font-size: 0.9rem;">PDF-просмотрщик будет активирован при загрузке реального файла</p>
+        <div style="text-align: center; padding: 40px; color: #ef4444;">
+            <div style="font-size: 4rem; margin-bottom: 20px;">❌</div>
+            <h3>Ошибка загрузки PDF</h3>
+            <p>${message}</p>
+            <button class="btn btn-primary" onclick="closePdfViewer()" style="margin-top: 20px;">
+                <i class="fas fa-times"></i> Закрыть
+            </button>
         </div>
     `;
+}
+
+// Рендеринг страницы PDF
+function renderPage(num) {
+    if (!currentPdfDoc) return;
     
-    // Сбрасываем номер страницы
-    currentPageNum = 1;
-    document.getElementById('page-info').textContent = 'Страница 1 из 1';
+    const container = document.getElementById('pdf-container');
+    
+    // Очищаем контейнер
+    container.innerHTML = '';
+    
+    // Создаем canvas для рендеринга
+    const canvas = document.createElement('canvas');
+    canvas.id = 'pdf-canvas';
+    container.appendChild(canvas);
+    
+    const ctx = canvas.getContext('2d');
+    
+    currentPdfDoc.getPage(num).then(function(page) {
+        // Вычисляем масштаб под размер контейнера
+        const viewport = page.getViewport({ scale: 1 });
+        const containerWidth = container.clientWidth;
+        const containerHeight = container.clientHeight;
+        
+        const scaleX = containerWidth / viewport.width;
+        const scaleY = containerHeight / viewport.height;
+        const scale = Math.min(scaleX, scaleY) * 0.95; // 95% для отступов
+        
+        const scaledViewport = page.getViewport({ scale: scale });
+        
+        // Устанавливаем размеры canvas
+        canvas.height = scaledViewport.height;
+        canvas.width = scaledViewport.width;
+        
+        // Рендерим страницу
+        const renderContext = {
+            canvasContext: ctx,
+            viewport: scaledViewport
+        };
+        
+        page.render(renderContext).promise.then(function() {
+            // Страница успешно отрендерена
+            document.getElementById('page-info').textContent = 'Страница ' + num + ' из ' + currentPdfDoc.numPages;
+            currentPageNum = num;
+            updatePageButtons();
+        });
+    });
+}
+
+// Обновление состояния кнопок
+function updatePageButtons() {
+    const prevBtn = document.getElementById('prev-page');
+    const nextBtn = document.getElementById('next-page');
+    
+    if (prevBtn) {
+        prevBtn.disabled = !currentPdfDoc || currentPageNum <= 1;
+    }
+    if (nextBtn) {
+        nextBtn.disabled = !currentPdfDoc || currentPageNum >= currentPdfDoc.numPages;
+    }
 }
 
 function closePdfViewer() {
@@ -327,13 +452,17 @@ function closePdfViewer() {
 }
 
 function nextPage() {
-    // Логика перелистывания страниц
-    showNotification('Функция в разработке', 'error');
+    if (currentPdfDoc && currentPageNum < currentPdfDoc.numPages) {
+        currentPageNum++;
+        renderPage(currentPageNum);
+    }
 }
 
 function prevPage() {
-    // Логика возврата на предыдущую страницу
-    showNotification('Функция в разработке', 'error');
+    if (currentPdfDoc && currentPageNum > 1) {
+        currentPageNum--;
+        renderPage(currentPageNum);
+    }
 }
 
 function downloadBook(fileUrl, title) {

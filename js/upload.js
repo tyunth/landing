@@ -117,15 +117,59 @@ function generateFileName(originalName) {
     return `book_${timestamp}_${random}_${cleanName}${extension}`;
 }
 
-// Сохранение файла в localStorage
+// Сохранение файла в IndexedDB (для больших файлов)
 function saveFileToStorage(fileName, fileData) {
-    try {
-        localStorage.setItem(`pdf_${fileName}`, fileData);
-        console.log('Файл сохранен:', fileName);
-    } catch (error) {
-        console.error('Ошибка сохранения файла:', error);
-        throw new Error('Не удалось сохранить файл');
-    }
+    return new Promise((resolve, reject) => {
+        // Проверяем поддержку IndexedDB
+        if (!('indexedDB' in window)) {
+            console.warn('IndexedDB не поддерживается, используем временное хранение');
+            // Сохраняем в глобальную переменную для временного хранения
+            if (!window.tempPdfFiles) {
+                window.tempPdfFiles = {};
+            }
+            window.tempPdfFiles[fileName] = fileData;
+            resolve(fileName);
+            return;
+        }
+
+        const request = indexedDB.open('MathBooksDB', 1);
+
+        request.onerror = function() {
+            console.error('Ошибка открытия IndexedDB');
+            reject(new Error('Не удалось открыть базу данных'));
+        };
+
+        request.onupgradeneeded = function(event) {
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains('pdfFiles')) {
+                db.createObjectStore('pdfFiles', { keyPath: 'fileName' });
+            }
+        };
+
+        request.onsuccess = function(event) {
+            const db = event.target.result;
+            const transaction = db.transaction(['pdfFiles'], 'readwrite');
+            const store = transaction.objectStore('pdfFiles');
+            
+            const fileRecord = {
+                fileName: fileName,
+                fileData: fileData,
+                uploadDate: new Date().toISOString()
+            };
+
+            const addRequest = store.put(fileRecord);
+            
+            addRequest.onsuccess = function() {
+                console.log('Файл сохранен в IndexedDB:', fileName);
+                resolve(fileName);
+            };
+            
+            addRequest.onerror = function() {
+                console.error('Ошибка сохранения в IndexedDB');
+                reject(new Error('Не удалось сохранить файл в базе данных'));
+            };
+        };
+    });
 }
 
 // Добавление учебника из загруженного файла
@@ -360,31 +404,132 @@ window.handleBookInfo = function(bookInfo) {
     console.log('Информация о книге:', bookInfo);
 };
 
-// Дополнительные функции для управления файлами
-function deleteFile(fileName) {
-    try {
-        localStorage.removeItem(`pdf_${fileName}`);
-        console.log('Файл удален:', fileName);
-        return true;
-    } catch (error) {
-        console.error('Ошибка удаления файла:', error);
-        return false;
-    }
-}
-
+// Получение PDF из IndexedDB
 function getFileUrl(fileName) {
-    return localStorage.getItem(`pdf_${fileName}`);
+    return new Promise((resolve, reject) => {
+        // Сначала проверяем временное хранилище
+        if (window.tempPdfFiles && window.tempPdfFiles[fileName]) {
+            resolve(window.tempPdfFiles[fileName]);
+            return;
+        }
+
+        // Проверяем поддержку IndexedDB
+        if (!('indexedDB' in window)) {
+            reject(new Error('IndexedDB не поддерживается'));
+            return;
+        }
+
+        const request = indexedDB.open('MathBooksDB', 1);
+
+        request.onerror = function() {
+            reject(new Error('Не удалось открыть базу данных'));
+        };
+
+        request.onsuccess = function(event) {
+            const db = event.target.result;
+            const transaction = db.transaction(['pdfFiles'], 'readonly');
+            const store = transaction.objectStore('pdfFiles');
+            
+            const getRequest = store.get(fileName);
+            
+            getRequest.onsuccess = function() {
+                if (getRequest.result) {
+                    resolve(getRequest.result.fileData);
+                } else {
+                    reject(new Error('Файл не найден'));
+                }
+            };
+            
+            getRequest.onerror = function() {
+                reject(new Error('Ошибка получения файла'));
+            };
+        };
+    });
 }
 
-function listUploadedFiles() {
-    const files = [];
-    for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith('pdf_')) {
-            files.push(key.replace('pdf_', ''));
+// Удаление файла из IndexedDB
+function deleteFile(fileName) {
+    return new Promise((resolve, reject) => {
+        // Удаляем из временного хранилища
+        if (window.tempPdfFiles && window.tempPdfFiles[fileName]) {
+            delete window.tempPdfFiles[fileName];
         }
-    }
-    return files;
+
+        // Проверяем поддержку IndexedDB
+        if (!('indexedDB' in window)) {
+            resolve(true);
+            return;
+        }
+
+        const request = indexedDB.open('MathBooksDB', 1);
+
+        request.onerror = function() {
+            reject(new Error('Не удалось открыть базу данных'));
+        };
+
+        request.onsuccess = function(event) {
+            const db = event.target.result;
+            const transaction = db.transaction(['pdfFiles'], 'readwrite');
+            const store = transaction.objectStore('pdfFiles');
+            
+            const deleteRequest = store.delete(fileName);
+            
+            deleteRequest.onsuccess = function() {
+                console.log('Файл удален из IndexedDB:', fileName);
+                resolve(true);
+            };
+            
+            deleteRequest.onerror = function() {
+                reject(new Error('Ошибка удаления файла'));
+            };
+        };
+    });
+}
+
+// Список загруженных файлов
+function listUploadedFiles() {
+    return new Promise((resolve, reject) => {
+        const files = [];
+        
+        // Добавляем файлы из временного хранилища
+        if (window.tempPdfFiles) {
+            Object.keys(window.tempPdfFiles).forEach(fileName => {
+                files.push(fileName);
+            });
+        }
+
+        // Проверяем поддержку IndexedDB
+        if (!('indexedDB' in window)) {
+            resolve(files);
+            return;
+        }
+
+        const request = indexedDB.open('MathBooksDB', 1);
+
+        request.onerror = function() {
+            reject(new Error('Не удалось открыть базу данных'));
+        };
+
+        request.onsuccess = function(event) {
+            const db = event.target.result;
+            const transaction = db.transaction(['pdfFiles'], 'readonly');
+            const store = transaction.objectStore('pdfFiles');
+            
+            const getAllRequest = store.getAll();
+            
+            getAllRequest.onsuccess = function() {
+                const storedFiles = getAllRequest.result;
+                storedFiles.forEach(fileRecord => {
+                    files.push(fileRecord.fileName);
+                });
+                resolve(files);
+            };
+            
+            getAllRequest.onerror = function() {
+                reject(new Error('Ошибка получения списка файлов'));
+            };
+        };
+    });
 }
 
 // Экспорт функций
