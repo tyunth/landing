@@ -8,29 +8,20 @@ let pdfViewer = null;
 // Учебники (будут загружаться из localStorage или использовать дефолтные)
 let books = [];
 
+
 // Инициализация при загрузке страницы
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() { // Добавили async здесь
     initNavigation();
     initContactForm();
     initNotifications();
     initTasks();
     
-    // Ждем загрузки книг с сервера
-    await loadBooks();
+    // Теперь await будет работать корректно
+    await loadBooks(); 
     
-    // Если нет учебников, добавляем демо-данные
-    if (books.length === 0) {
-        addDemoBooks();
-        saveBooks();
-    }
-    
-    renderBooks();
-    
-    // Загружаем задачи из localStorage
+    // Загружаем задачи (их тоже можно будет потом перевести на API)
     loadTasks();
-    
-    // Если нет задач, добавляем демо-данные
-    if (tasks.length === 0) {
+    if (typeof tasks !== 'undefined' && tasks.length === 0) {
         addDemoTasks();
         saveTasks();
     }
