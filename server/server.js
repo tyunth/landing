@@ -226,6 +226,36 @@ app.post('/api/upload/pdf', uploadPdf.single('file'), async (req, res) => {
     }
 });
 
+// Simple upload endpoint for compatibility with upload.js
+app.post('/upload', uploadPdf.single('file'), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ success: false, error: 'Файл не загружен' });
+        }
+
+        // Move file to /pdf directory in root
+        const rootPdfDir = path.join(__dirname, '../pdf');
+        if (!fs.existsSync(rootPdfDir)) {
+            fs.mkdirSync(rootPdfDir, { recursive: true });
+        }
+
+        const newFilePath = path.join(rootPdfDir, req.file.filename);
+        const oldFilePath = req.file.path;
+
+        // Move file from uploads/pdf to root/pdf
+        fs.renameSync(oldFilePath, newFilePath);
+
+        res.json({
+            success: true,
+            filename: req.file.filename,
+            message: 'Файл успешно загружен'
+        });
+    } catch (error) {
+        console.error('Error uploading file:', error);
+        res.status(500).json({ success: false, error: 'Ошибка при загрузке файла' });
+    }
+});
+
 // Tasks API
 app.get('/api/tasks', async (req, res) => {
     try {
@@ -344,6 +374,9 @@ app.post('/api/upload/image', uploadImage.single('file'), async (req, res) => {
 
 // Serve uploaded files statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Serve PDF files from root /pdf directory
+app.use('/pdf', express.static(path.join(__dirname, '../pdf')));
 
 // Error handling middleware
 app.use((error, req, res, next) => {

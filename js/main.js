@@ -314,35 +314,18 @@ async function openPdfViewer(fileUrl, title) {
             </div>
         `;
         
-        // Пытаемся получить PDF из хранилища
-        let pdfData;
-        try {
-            pdfData = await getFileUrl(fileUrl);
-        } catch (error) {
-            console.warn('Файл не найден в хранилище:', error.message);
-            // Пытаемся загрузить с сервера
-            try {
-                const response = await fetch(`/uploads/pdf/${fileUrl}`);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const blob = await response.blob();
-                const reader = new FileReader();
-                pdfData = await new Promise((resolve, reject) => {
-                    reader.onload = () => resolve(reader.result);
-                    reader.onerror = reject;
-                    reader.readAsDataURL(blob);
-                });
-            } catch (serverError) {
-                console.error('Ошибка загрузки с сервера:', serverError);
-                throw new Error('Файл не найден ни в хранилище, ни на сервере');
-            }
+        // Загружаем PDF с сервера
+        const response = await fetch(`/pdf/${fileUrl}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
+        
+        const blob = await response.blob();
         
         // Загружаем PDF через PDF.js
         if (typeof pdfjsLib !== 'undefined') {
             // Инициализируем PDF.js
-            const loadingTask = pdfjsLib.getDocument({ data: atob(pdfData.split(',')[1]) });
+            const loadingTask = pdfjsLib.getDocument(URL.createObjectURL(blob));
             
             loadingTask.promise.then(function(pdf) {
                 // Успешно загрузили PDF

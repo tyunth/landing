@@ -117,58 +117,46 @@ function generateFileName(originalName) {
     return `book_${timestamp}_${random}_${cleanName}${extension}`;
 }
 
-// Сохранение файла в IndexedDB (для больших файлов)
+// Сохранение файла на сервер
 function saveFileToStorage(fileName, fileData) {
     return new Promise((resolve, reject) => {
-        // Проверяем поддержку IndexedDB
-        if (!('indexedDB' in window)) {
-            console.warn('IndexedDB не поддерживается, используем временное хранение');
-            // Сохраняем в глобальную переменную для временного хранения
-            if (!window.tempPdfFiles) {
-                window.tempPdfFiles = {};
-            }
-            window.tempPdfFiles[fileName] = fileData;
-            resolve(fileName);
-            return;
+        // Создаем FormData для отправки файла
+        const formData = new FormData();
+        
+        // Преобразуем base64 в Blob
+        const byteCharacters = atob(fileData.split(',')[1]);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
         }
-
-        const request = indexedDB.open('MathBooksDB', 1);
-
-        request.onerror = function() {
-            console.error('Ошибка открытия IndexedDB');
-            reject(new Error('Не удалось открыть базу данных'));
-        };
-
-        request.onupgradeneeded = function(event) {
-            const db = event.target.result;
-            if (!db.objectStoreNames.contains('pdfFiles')) {
-                db.createObjectStore('pdfFiles', { keyPath: 'fileName' });
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'application/pdf' });
+        
+        formData.append('file', blob, fileName);
+        
+        // Отправляем файл на сервер
+        fetch('/upload', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-        };
-
-        request.onsuccess = function(event) {
-            const db = event.target.result;
-            const transaction = db.transaction(['pdfFiles'], 'readwrite');
-            const store = transaction.objectStore('pdfFiles');
-            
-            const fileRecord = {
-                fileName: fileName,
-                fileData: fileData,
-                uploadDate: new Date().toISOString()
-            };
-
-            const addRequest = store.put(fileRecord);
-            
-            addRequest.onsuccess = function() {
-                console.log('Файл сохранен в IndexedDB:', fileName);
-                resolve(fileName);
-            };
-            
-            addRequest.onerror = function() {
-                console.error('Ошибка сохранения в IndexedDB');
-                reject(new Error('Не удалось сохранить файл в базе данных'));
-            };
-        };
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                console.log('Файл успешно загружен на сервер:', data.filename);
+                resolve(data.filename);
+            } else {
+                throw new Error(data.error || 'Ошибка загрузки на сервер');
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки на сервер:', error);
+            reject(new Error('Не удалось загрузить файл на сервер'));
+        });
     });
 }
 
