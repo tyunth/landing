@@ -305,14 +305,15 @@ async function saveBookInfo() {
     if (!modal) return;
     
     // Собираем данные из формы
-    const bookData = {
-        title: document.getElementById('book-title').value,
-        author: document.getElementById('book-author').value,
-        class: document.getElementById('book-class').value,
-        subject: document.getElementById('book-subject').value,
-        category: document.getElementById('book-category').value,
-        description: document.getElementById('book-description').value
-    };
+        const bookData = {
+            title: document.getElementById('book-title').value,
+            author: document.getElementById('book-author').value,
+            class: document.getElementById('book-class').value,
+            subject: document.getElementById('book-subject').value,
+            category: document.getElementById('book-category').value,
+            description: document.getElementById('book-description').value,
+            file: window.lastUploadedFileName // Мы должны сохранить это имя после вызова saveFileToStorage
+        };
 
     try {
         // 1. Сначала создаем запись о книге в БД

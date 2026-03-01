@@ -152,22 +152,24 @@ app.get('/api/books', async (req, res) => {
 
 app.post('/api/books', async (req, res) => {
     try {
-        const { title, author, class: classNum, subject, category, description } = req.body;
+        const { title, author, class: classNum, subject, category, description, file } = req.body;
         
-        // Validate required fields
         if (!title || !author || !classNum || !subject || !category) {
             return res.status(400).json({ error: 'Все обязательные поля должны быть заполнены' });
         }
 
+        // Формируем путь, если файл был передан
+        const filePath = file ? `/pdf/${file}` : null;
+
         const result = await pool.query(
-            'INSERT INTO books (title, author, class, subject, category, description) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-            [title, author, parseInt(classNum), subject, category, description || null]
+            'INSERT INTO books (title, author, class, subject, category, description, file_path) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+            [title, author, parseInt(classNum), subject, category, description || null, filePath]
         );
 
         res.status(201).json(result.rows[0]);
     } catch (error) {
         console.error('Error creating book:', error);
-        res.status(500).json({ error: 'Ошибка при создании учебника' });
+        res.status(500).json({ error: 'Ошибка при создании учебника в БД' });
     }
 });
 
