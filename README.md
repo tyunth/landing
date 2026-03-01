@@ -1,6 +1,6 @@
 # Math Landing
 
-**Math Landing** - это современное веб-приложение для изучения математики, объединяющее библиотеку учебников и интерактивные задачи для учеников 5-11 классов.
+**Math Landing** - это веб-приложение для изучения математики, объединяющее библиотеку учебников и интерактивные задачи для учеников 5-11 классов.
 
 ![Math Landing](https://img.shields.io/badge/Math%20Landing-v1.0-blue)
 ![HTML5](https://img.shields.io/badge/HTML5-v5.0-orange)
@@ -64,17 +64,17 @@
 
 ```
 math-landing/
-├── client/                 # Клиентская часть
-│   ├── index.html         # Главная страница
-│   ├── css/               # Стили
-│   │   ├── style.css      # Основные стили
-│   │   └── responsive.css # Адаптивные стили
-│   └── js/                # JavaScript файлы
-│       ├── main.js        # Главный скрипт
-│       ├── upload.js      # Загрузка файлов
-│       ├── pdf.js         # PDF просмотрщик
-│       └── games.js       # Мини-игры
-├── server/                 # Серверная часть
+├── index.html             # Главная страница
+├── css/                   # Стили
+│   ├── style.css          # Основные стили
+│   └── responsive.css     # Адаптивные стили
+├── js/                    # JavaScript файлы
+│   ├── main.js            # Главный скрипт
+│   ├── upload.js          # Загрузка файлов
+│   ├── books.js           # Работа с учебниками
+│   └── games.js           # Мини-игры
+├── pdf/                   # PDF учебники
+├── server/                # Серверная часть
 │   ├── server.js          # Главный серверный файл
 │   ├── schema.sql         # SQL схема базы данных
 │   ├── package.json       # Зависимости сервера
@@ -94,6 +94,7 @@ math-landing/
 - `POST /api/books` - Создать новый учебник
 - `DELETE /api/books/:id` - Удалить учебник
 - `POST /api/upload/pdf` - Загрузить PDF файл
+- `POST /upload` - Простая загрузка файлов (для совместимости)
 
 #### Задачи
 - `GET /api/tasks` - Получить список задач
@@ -117,7 +118,7 @@ DB_USER=your_username
 DB_PASSWORD=your_password
 DB_SSL=false
 MAX_FILE_SIZE=250000000
-CORS_ORIGIN=http://localhost:1000
+CORS_ORIGIN=http://localhost:1000,https://igro-kon.ru
 ```
 
 #### Клиент
@@ -137,12 +138,15 @@ const API_BASE_URL = 'http://localhost:1000/api';
 - **pgAdmin** - Работа с PostgreSQL
 - **Lighthouse** - Аудит производительности
 
+### Последние исправления
+- **Исправлена 404 ошибка при загрузке учебников**: Обновлен URL загрузки файлов на `https://igro-kon.ru/upload`
+- **Настроена CORS поддержка**: Добавлен домен `https://igro-kon.ru` в список разрешенных источников
+- **Улучшена обработка ошибок**: Добавлены дополнительные проверки и сообщения об ошибках
 
 ## 📞 Контакты
 
-- **Email**: support@mathlanding.com
-- **Website**: [mathlanding.com](https://mathlanding.com)
-- **GitHub**: [@math-landing](https://github.com/math-landing)
+- **Email**: [tyunth@yandex.ru](mailto:tyunth@yandex.ru)
+- **GitHub**: [https://github.com/tyunth/landing](https://github.com/tyunth/landing)
 
 ---
 
