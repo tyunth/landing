@@ -229,14 +229,18 @@ app.post('/api/upload/pdf', uploadPdf.single('file'), async (req, res) => {
 });
 
 // Simple upload endpoint for compatibility with upload.js
-app.post('/upload', uploadPdf.single('file'), async (req, res) => {
+// Обновленный эндпоинт для загрузки
+app.post('/api/upload-compat', uploadPdf.single('file'), async (req, res) => {
     try {
+        console.log('Получен запрос на загрузку файла:', req.file ? req.file.originalname : 'нет файла');
+        
         if (!req.file) {
             return res.status(400).json({ success: false, error: 'Файл не загружен' });
         }
 
-        // Move file to /pdf directory in root
+        // Путь к папке pdf в корне проекта (вне папки server)
         const rootPdfDir = path.join(__dirname, '../pdf');
+        
         if (!fs.existsSync(rootPdfDir)) {
             fs.mkdirSync(rootPdfDir, { recursive: true });
         }
@@ -244,7 +248,7 @@ app.post('/upload', uploadPdf.single('file'), async (req, res) => {
         const newFilePath = path.join(rootPdfDir, req.file.filename);
         const oldFilePath = req.file.path;
 
-        // Move file from uploads/pdf to root/pdf
+        // Перемещаем файл
         fs.renameSync(oldFilePath, newFilePath);
 
         res.json({
@@ -253,8 +257,8 @@ app.post('/upload', uploadPdf.single('file'), async (req, res) => {
             message: 'Файл успешно загружен'
         });
     } catch (error) {
-        console.error('Error uploading file:', error);
-        res.status(500).json({ success: false, error: 'Ошибка при загрузке файла' });
+        console.error('Ошибка при перемещении файла:', error);
+        res.status(500).json({ success: false, error: 'Ошибка сервера при сохранении файла' });
     }
 });
 

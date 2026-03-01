@@ -135,7 +135,7 @@ function saveFileToStorage(fileName, fileData) {
         formData.append('file', blob, fileName);
         
         // Отправляем файл на сервер
-        fetch('https://igro-kon.ru/upload', {
+        fetch('https://igro-kon.ru/api/upload-compat', {
             method: 'POST',
             body: formData
         })
