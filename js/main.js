@@ -15,8 +15,8 @@ document.addEventListener('DOMContentLoaded', function() {
     initNotifications();
     initTasks();
     
-    // Загружаем учебники из localStorage
-    loadBooks();
+    // Ждем загрузки книг с сервера
+    await loadBooks();
     
     // Если нет учебников, добавляем демо-данные
     if (books.length === 0) {
@@ -111,11 +111,41 @@ function saveBooks() {
     localStorage.setItem('mathBooks', JSON.stringify(books));
 }
 
-function loadBooks() {
-    const saved = localStorage.getItem('mathBooks');
-    if (saved) {
-        books = JSON.parse(saved);
+async function loadBooks() {
+    try {
+        // Пробуем получить данные с сервера
+        const response = await fetch('/api/books');
+        
+        if (!response.ok) {
+            throw new Error('Ошибка при загрузке с сервера');
+        }
+
+        const booksFromServer = await response.json();
+        
+        // Если на сервере есть книги, используем их
+        if (booksFromServer && booksFromServer.length > 0) {
+            books = booksFromServer;
+            console.log('Книги загружены из БД:', books);
+        } else {
+            // Если в БД пусто, берем из localStorage или демо
+            const savedBooks = localStorage.getItem('mathBooks');
+            if (savedBooks) {
+                books = JSON.parse(savedBooks);
+            } else {
+                addDemoBooks();
+            }
+        }
+    } catch (error) {
+        console.error('Критическая ошибка загрузки:', error);
+        // Резервный вариант: грузим из localStorage, если сервер упал
+        const savedBooks = localStorage.getItem('mathBooks');
+        if (savedBooks) {
+            books = JSON.parse(savedBooks);
+        }
     }
+    
+    // После загрузки (откуда бы она ни была) — рисуем
+    renderBooks();
 }
 
 function addDemoBooks() {
