@@ -4,7 +4,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const { Pool } = require('pg');
-require('dotenv').config();
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
 const app = express();
 const PORT = process.env.PORT || 1000;
@@ -47,10 +47,12 @@ const pdfStorage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, pdfDir);
     },
-    filename: function (req, file, cb) {
-        const uniqueName = `book_${Date.now()}_${Math.random().toString(36).substr(2, 9)}${path.extname(file.originalname)}`;
-        cb(null, uniqueName);
-    }
+        filename: function (req, file, cb) {
+            const ext = path.extname(file.originalname);
+            const nameWithoutExt = path.basename(file.originalname, ext);
+            const uniqueName = `book_${Date.now()}_${Math.random().toString(36).substr(2, 5)}${ext}`;
+            cb(null, uniqueName);
+        }
 });
 
 const uploadPdf = multer({
